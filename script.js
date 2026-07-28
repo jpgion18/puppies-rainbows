@@ -2,7 +2,7 @@
   'use strict';
 
   const DOG_API_URL = 'https://dog.ceo/api/breeds/image/random';
-  const CAT_API_URL = 'https://cataas.com/cat?json=true';
+  const CAT_IMAGE_URL = 'https://cataas.com/cat';
   const BATCH_SIZE = 12;
 
   const CATEGORIES = {
@@ -172,22 +172,15 @@
       });
   }
 
-  async function fetchCatBatch(limit) {
-    const results = await Promise.allSettled(
-      Array.from({ length: limit }, () => fetch(CAT_API_URL).then((r) => {
-        if (!r.ok) throw new Error(`Cataas request failed (${r.status})`);
-        return r.json();
-      }))
-    );
+  function fetchCatBatch(limit) {
+    // Hotlinked directly as <img> (no fetch/JSON call) — cataas.com's own
+    // anti-bot protection returns 403 for scripted requests to its JSON
+    // API but allows normal image loads, which is its intended usage.
     const items = [];
-    results.forEach((r) => {
-      if (r.status !== 'fulfilled' || !r.value || !r.value.url) return;
-      const url = `https://cataas.com${r.value.url}`;
-      if (seenIds.has(url)) return;
-      seenIds.add(url);
+    for (let i = 0; i < limit; i++) {
+      const url = `${CAT_IMAGE_URL}?width=500&height=500&_=${Date.now()}-${i}-${Math.random()}`;
       items.push({ id: url, url, catKey: 'kittens' });
-    });
-    if (items.length === 0) throw new Error('No kitten images fetched');
+    }
     return items;
   }
 
@@ -204,7 +197,7 @@
   function fetchCategory(catKey, limit) {
     const mode = CATEGORIES[catKey].mode;
     if (mode === 'dog') return fetchDogBatch(limit);
-    if (mode === 'cat') return fetchCatBatch(limit);
+    if (mode === 'cat') return Promise.resolve(fetchCatBatch(limit));
     return Promise.resolve(fetchIllustrationBatch(catKey, limit));
   }
 
