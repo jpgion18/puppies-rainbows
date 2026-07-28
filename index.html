@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Puppies and Rainbows</title>
+<meta name="description" content="A little corner of the internet that's just good. Puppies, kittens, bunnies, and rainbows — no news, no doom, no comments.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="float-bubble fb1"></div>
+  <div class="float-bubble fb2"></div>
+  <div class="float-bubble fb3"></div>
+  <div class="float-bubble fb4"></div>
+  <div class="float-bubble fb5"></div>
+  <h1>🐾 Puppies &amp; Rainbows 🌈</h1>
+  <p class="tagline">A little corner of the internet that's just... good.</p>
+</header>
+
+<main class="page">
+
+  <div class="controls">
+    <div class="pillar-row" id="filterRow">
+      <button class="pillar active" data-filter="all">
+        <span class="emoji">✨</span><span class="name">All</span>
+      </button>
+      <button class="pillar" data-filter="puppies">
+        <span class="emoji">🐶</span><span class="name">Puppies</span>
+      </button>
+      <button class="pillar" data-filter="kittens">
+        <span class="emoji">🐱</span><span class="name">Kittens</span>
+      </button>
+      <button class="pillar" data-filter="bunnies">
+        <span class="emoji">🐰</span><span class="name">Bunnies</span>
+      </button>
+      <button class="pillar" data-filter="rainbows">
+        <span class="emoji">🌈</span><span class="name">Rainbows</span>
+      </button>
+    </div>
+
+    <button class="surprise-btn" id="surpriseBtn">✨ Surprise me</button>
+  </div>
+
+  <p class="status-line" id="statusLine" aria-live="polite"></p>
+
+  <div class="feed" id="feed"></div>
+
+  <div class="load-more-wrap">
+    <button class="load-more-btn" id="loadMoreBtn">🐾 Show me more good things</button>
+  </div>
+
+</main>
+
+<footer>
+  Puppies and Rainbows — an escape button for your brain.<br>
+  GIFs via <a href="https://giphy.com" target="_blank" rel="noopener">GIPHY</a>.
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
