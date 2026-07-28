@@ -3,11 +3,15 @@
 
   const DOG_API_URL = 'https://dog.ceo/api/breeds/image/random';
   const CAT_IMAGE_URL = 'https://cataas.com/cat';
+  const FOX_API_URL = 'https://randomfox.ca/floof/';
+  const DUCK_API_URL = 'https://random-d.uk/api/v2/random';
   const BATCH_SIZE = 12;
 
   const CATEGORIES = {
     puppies: { emoji: '🐶', label: 'Puppies', mode: 'dog', bg: '#FFD9E6' },
     kittens: { emoji: '🐱', label: 'Kittens', mode: 'cat', bg: '#FFE8CC' },
+    foxes: { emoji: '🦊', label: 'Foxes', mode: 'fox', bg: '#FFE0C2' },
+    ducks: { emoji: '🦆', label: 'Ducks', mode: 'duck', bg: '#FFF3B0' },
   };
 
   const feedEl = document.getElementById('feed');
@@ -60,10 +64,47 @@
     return items;
   }
 
+  async function fetchSingleImageBatch(limit, { apiUrl, extractUrl, catKey }) {
+    const results = await Promise.allSettled(
+      Array.from({ length: limit }, () => fetch(apiUrl).then((r) => {
+        if (!r.ok) throw new Error(`${catKey} request failed (${r.status})`);
+        return r.json();
+      }))
+    );
+    const items = [];
+    results.forEach((r) => {
+      if (r.status !== 'fulfilled') return;
+      const url = extractUrl(r.value);
+      if (!url || seenIds.has(url)) return;
+      seenIds.add(url);
+      items.push({ id: url, url, catKey });
+    });
+    if (items.length === 0) throw new Error(`No ${catKey} images fetched`);
+    return items;
+  }
+
+  function fetchFoxBatch(limit) {
+    return fetchSingleImageBatch(limit, {
+      apiUrl: FOX_API_URL,
+      extractUrl: (json) => json.image,
+      catKey: 'foxes',
+    });
+  }
+
+  function fetchDuckBatch(limit) {
+    return fetchSingleImageBatch(limit, {
+      apiUrl: DUCK_API_URL,
+      extractUrl: (json) => json.url || json.image,
+      catKey: 'ducks',
+    });
+  }
+
   function fetchCategory(catKey, limit) {
     const mode = CATEGORIES[catKey].mode;
     if (mode === 'dog') return fetchDogBatch(limit);
-    return Promise.resolve(fetchCatBatch(limit));
+    if (mode === 'cat') return Promise.resolve(fetchCatBatch(limit));
+    if (mode === 'fox') return fetchFoxBatch(limit);
+    return fetchDuckBatch(limit);
   }
 
   function categoriesForFilter(filter) {
